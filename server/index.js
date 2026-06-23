@@ -7,17 +7,23 @@ const authRoutes = require('./routes/auth');
 const foodRoutes = require('./routes/food'); 
 const orderRoutes = require('./routes/order');  
 
+const paymentRoutes = require('./routes/payment');
+
+
 const app = express();
 
 app.use(cors({
     origin: '*'
 }));
+
+app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 
 //Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/food', foodRoutes); 
 app.use('/api/orders', orderRoutes); 
+app.use('/api/payment', paymentRoutes)
 
 //Database + Server
 mongoose.connect(process.env.MONGO_URI)

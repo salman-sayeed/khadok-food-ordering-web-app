@@ -10,6 +10,7 @@ const Cart = ({ onClose }) => {
 
   const handlePlaceOrder = async () => {
     try {
+      //create order in DB
       const items = cart.map(item => ({
         food: item._id,
         name: item.name,
@@ -17,15 +18,26 @@ const Cart = ({ onClose }) => {
         quantity: item.quantity
       }));
 
-      await axios.post(
+      const orderRes = await axios.post(
         "http://localhost:8000/api/orders",
         { items, totalAmount },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      const orderId = orderRes.data._id;
+
+      //create Stripe checkout session
+      const paymentRes = await axios.post(
+        "http://localhost:8000/api/payment/create-checkout-session",
+        { items, orderId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      //redirect to Stripe checkout
+      console.log("Stripe URL:", paymentRes.data.url);
       clearCart();
-      onClose();
-      navigate("/order-confirmation");
+      window.location.href = paymentRes.data.url;
+
     } catch (err) {
       console.error(err);
       alert("Failed to place order. Please try again.");
