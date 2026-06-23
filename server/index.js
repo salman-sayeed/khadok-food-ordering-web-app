@@ -4,6 +4,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
+const foodRoutes = require('./routes/food'); 
+const orderRoutes = require('./routes/order');  
 
 const app = express();
 
@@ -14,6 +16,8 @@ app.use(express.json());
 
 //Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/food', foodRoutes); 
+app.use('/api/orders', orderRoutes); 
 
 //Database + Server
 mongoose.connect(process.env.MONGO_URI)
